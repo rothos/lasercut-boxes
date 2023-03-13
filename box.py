@@ -3,30 +3,26 @@
 # which resemble battlements.
 #
 # The program can be run from the command-line by typing:
-# > python box.py LxWxH "boxname"
+# > python box.py LxWxH boxname
 # The specified dimensions are in inches. For example:
-# > python box.py 6x4x3 "mybox"
+# > python box.py 6x4x3 mybox
 # will save a file called mybox-6x4x3.svg which contains the plans
 # for a box 6 inches long, 4 inches wide, and 3 inches high.
 
 import sys
-import math
 import svgwrite
 
-# # Save the command-line arguments in variables.
-# dimensions = sys.argv[1]
-# boxname = sys.argv[2]
+# Save the command-line arguments in variables.
+dimensions = sys.argv[1]
+boxname = sys.argv[2]
 
-# If any dimension is less than 0.25", return an error.
-# [todo]
+# If no dimensions are specified, use a default.
+if dimensions == "":
+    dimensions = "4x2x1"
 
-dimensions = "4x2x1"
-dimensions = "12x24x8"
-
-# If the user didn't specify a box name, use the name "box".
-# if boxname == "":
-    # boxname = "box"
-boxname = "box"
+# If a filename prefix isn't specified, use a default.
+if boxname == "":
+    boxname = "box"
 
 # Parse the dimensions string.
 length, width, height = map(float, dimensions.split("x"))
@@ -42,9 +38,15 @@ laser_offset_socket_length = 0.02
 path_buffer = 0.1
 dpi = 72
 
+# If any dimension is less than 2x the wood thickness, return an error.
+if any([float(d) < 2*wood_thickness for d in dimensions.split("x")]):
+    print("Error: dimensions must be at least 2x the wood thickness.")
+    sys.exit()
+
 #-----------------------------------------------------------------------------
 
-# Define the Path class
+# The Path class specifies a single closed path, and also provides some
+# simple operations and transformations we can perform on it.
 class Path:
     def __init__(self):
         self.points = []
