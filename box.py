@@ -13,16 +13,15 @@ import sys
 import svgwrite
 
 # Save the command-line arguments in variables.
-dimensions = sys.argv[1]
-boxname = sys.argv[2]
+# If no arguments are specified, use default values.
+dimensions = "4x2x1"
+boxname = "box"
 
-# If no dimensions are specified, use a default.
-if dimensions == "":
-    dimensions = "4x2x1"
+if len(sys.argv) > 1:
+    dimensions = sys.argv[1]
 
-# If a filename prefix isn't specified, use a default.
-if boxname == "":
-    boxname = "box"
+if len(sys.argv) > 2:
+    boxname = sys.argv[2]
 
 # Parse the dimensions string.
 length, width, height = map(float, dimensions.split("x"))
